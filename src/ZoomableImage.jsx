@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 const ZoomableImage = ({ src }) => {
   const containerRef = useRef(null);
   const imgRef = useRef(null);
-  // const positionRef = useRef({ x: 0, y: 0 });
+
   const [zoom, setZoom] = useState(1);
   const [initialDistance, setInitialDistance] = useState(null);
 
@@ -18,7 +18,7 @@ const ZoomableImage = ({ src }) => {
     } else if (event.touches.length === 1) {
       setInitialTouchPosition({
         x: event.touches[0].clientX,
-        y: event.touches[0].clientY
+        y: event.touches[0].clientY,
       });
       setInitialPosition(position);
     }
@@ -42,11 +42,11 @@ const ZoomableImage = ({ src }) => {
         const containerRect = container.getBoundingClientRect();
         const imgRect = img.getBoundingClientRect();
 
-        let newX = initialPosition.x + deltaX;
-        let newY = initialPosition.y + deltaY;
+        let newX = initialPosition.x + deltaX / zoom;
+        let newY = initialPosition.y + deltaY / zoom;
 
-        const maxLeft = containerRect.width - imgRect.width;
-        const maxTop = containerRect.height - imgRect.height;
+        const maxLeft = containerRect.width - imgRect.width / zoom;
+        const maxTop = containerRect.height - imgRect.height / zoom;
 
         newX = Math.min(0, Math.max(newX, maxLeft));
         newY = Math.min(0, Math.max(newY, maxTop));
@@ -67,33 +67,33 @@ const ZoomableImage = ({ src }) => {
   };
 
   useEffect(() => {
-    const container = containerRef.current;
-    const img = imgRef.current;
-    if (container && img) {
-      const containerRect = container.getBoundingClientRect();
-      const imgRect = img.getBoundingClientRect();
+    const handleResize = () => {
+      const container = containerRef.current;
+      const img = imgRef.current;
 
-     
+      if (container && img) {
+        const containerRect = container.getBoundingClientRect();
+        const imgRect = img.getBoundingClientRect();
+
         let newX = position.x;
         let newY = position.y;
 
-        const maxLeft = containerRect.width - imgRect.width;
-        const maxTop = containerRect.height - imgRect.height;
+        const maxLeft = containerRect.width - imgRect.width / zoom;
+        const maxTop = containerRect.height - imgRect.height / zoom;
 
         newX = Math.min(0, Math.max(newX, maxLeft));
         newY = Math.min(0, Math.max(newY, maxTop));
-        console.log(maxLeft)
-        setPosition({ x: newX, y: newY });
-       
-     
-    }
-  //  console.log(img.getBoundingClientRect().width)
-  
-   
-  }, [position]);
 
-  
-  
+        setPosition({ x: newX, y: newY });
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [position, zoom]);
+
   const containerStyle = {
     position: 'relative',
     overflow: 'hidden',
@@ -102,7 +102,7 @@ const ZoomableImage = ({ src }) => {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    border: '4px solid red'
+    border: '4px solid red',
   };
 
   const imgStyle = {
@@ -124,7 +124,6 @@ const ZoomableImage = ({ src }) => {
     setZoom((prevZoom) => {
       const newZoom = Math.max(prevZoom * 0.9, 1);
       if (newZoom === 1) {
-     
         setPosition({ x: 0, y: 0 });
       }
       return newZoom;
@@ -140,18 +139,13 @@ const ZoomableImage = ({ src }) => {
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        <img
-          ref={imgRef}
-          src={src}
-          alt="Zoomable"
-          style={imgStyle}
-        />
+        <img ref={imgRef} src={src} alt="Zoomable" style={imgStyle} />
       </div>
-      <div className='flex gap-4 mt-4 ms-8'>
-        <button className='bg-white text-black p-2' onClick={handleZoomIn}>
+      <div className="flex gap-4 mt-4 ms-8">
+        <button className="bg-white text-black p-2" onClick={handleZoomIn}>
           Zoom In
         </button>
-        <button className='bg-white text-black p-2' onClick={handleZoomOut}>
+        <button className="bg-white text-black p-2" onClick={handleZoomOut}>
           Zoom Out
         </button>
       </div>
