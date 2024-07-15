@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import  { useState, useRef } from 'react';
 import './App.css';
 
 const ZoomableImage = () => {
@@ -26,10 +26,22 @@ const ZoomableImage = () => {
       const touch = e.touches[0];
       const dx = touch.pageX - lastTouch.x;
       const dy = touch.pageY - lastTouch.y;
-      setTranslate((prevTranslate) => ({
-        x: prevTranslate.x + dx,
-        y: prevTranslate.y + dy,
-      }));
+
+      const containerRect = containerRef.current.getBoundingClientRect();
+      const imgRect = imgRef.current.getBoundingClientRect();
+
+      const newTranslateX = translate.x + dx;
+      const newTranslateY = translate.y + dy;
+
+      // Boundary checks
+      const maxTranslateX = (imgRect.width * scale - containerRect.width) / 2;
+      const maxTranslateY = (imgRect.height * scale - containerRect.height) / 2;
+
+      setTranslate({
+        x: Math.min(Math.max(newTranslateX, -maxTranslateX), maxTranslateX),
+        y: Math.min(Math.max(newTranslateY, -maxTranslateY), maxTranslateY),
+      });
+
       setLastTouch({ x: touch.pageX, y: touch.pageY });
     } else if (e.touches.length === 2) {
       const touch1 = e.touches[0];
@@ -71,4 +83,6 @@ const ZoomableImage = () => {
   );
 };
 
-export default ZoomableImage
+
+
+export default ZoomableImage;
