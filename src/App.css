@@ -1,4 +1,18 @@
-html, body {
-  /* touch-action: none;  */
-  overflow: hidden; /* Prevent scroll */
+#zoom-img {
+  cursor: move;
+  position: relative;
+  width: 500px;
+  height: 500px;
+}
+
+#zoom-container {
+  overflow: hidden;
+  background: red;
+  height: 500px;
+  width: 500px;
+}
+
+.button {
+  width: 100px;
+  height: 50px;
 }
