@@ -118,7 +118,7 @@ const ZoomableImage = ({ src }) => {
       >
         <img
           ref={imgRef}
-          src={src}
+          src="https://imgs.search.brave.com/qKxobAam5O8ZbQKmKqPUlsS-PxpUHva5I0TNOgwIi-Q/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly93d3cu/aXN0b2NrcGhvdG8u/Y29tL3Jlc291cmNl/cy9pbWFnZXMvRnJl/ZVBob3Rvcy9GcmVl/LVBob3RvLTc0MHg0/OTItMjE1NDU1Njgy/OC5qcGc"
           alt="Zoomable"
           style={imgStyle}
         />
