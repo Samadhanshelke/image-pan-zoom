@@ -3,30 +3,21 @@ html, body {
   overflow: hidden; /* Prevent scroll */
 }
 
-.App{
+.App {
+  text-align: center;
+}
+
+.image-container {
   width: 100vw;
   height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-#zoom-img {
-  cursor: move;
-  position: relative;
-  padding: 8px;
-  border: '4px solid red';
-  
-}
-
-#zoom-container {
   overflow: hidden;
-  background: red;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  position: relative;
+  /* cursor: grab; */
 }
 
-.button {
-  width: 100px;
-  height: 50px;
+.image-container img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  user-select: none;
 }
