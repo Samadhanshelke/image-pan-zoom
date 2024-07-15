@@ -30,6 +30,19 @@ const ZoomableImage = ({ src }) => {
       if (initialDistance) {
         const scale = currentDistance / initialDistance;
         setZoom((prevZoom) => Math.max(1, Math.min(prevZoom * scale, 3)));
+        if(scale > 1){
+          if(zoom > 3){
+            setZoom(3)
+          }else{
+            setZoom((pre)=>pre + 0.1)
+          }
+        }else{
+          if(zoom < 1){
+            setZoom(1)
+          }else{
+            setZoom((pre)=>pre - 0.1)
+          }
+        }
       }
     } else if (event.touches.length === 1) {
       const deltaX = event.touches[0].clientX - initialTouchPosition.x;
@@ -97,11 +110,16 @@ const ZoomableImage = ({ src }) => {
   };
 
   const handleZoomOut = () => {
+    const img = imgRef.current;
+      const imgRect = img.getBoundingClientRect();
+      console.log(imgRect.width);
+     
     setZoom((prevZoom) => {
       const newZoom = Math.max(prevZoom * 0.9, 1);
+      // setPosition({ x: 0, y: 0 });
       if (newZoom === 1) {
         // Reset position to center when zoomed out completely
-        setPosition({ x: 0, y: 0 });
+        setZoom(1)
       }
       return newZoom;
     });
