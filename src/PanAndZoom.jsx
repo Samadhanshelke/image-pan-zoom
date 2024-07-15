@@ -81,7 +81,8 @@ const PanAndZoom = ({ src }) => {
     >
       <div
         style={{
-          transform: `translate(${position.x}px, ${position.y}px) scale(${position.z})`,
+          transform: `translate(${position.x}px, ${position.y}px) scale(${position.z}) `,
+          border:'2px solid red'
         }}
       >
         <img

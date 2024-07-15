@@ -1,5 +1,7 @@
 .PanAndZoomImage-container {
     overflow: hidden;
+    width: 100vw;
+    height: 100vh;
   }
   
   .PanAndZoomImage-image {
