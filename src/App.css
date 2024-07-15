@@ -1,15 +1,29 @@
+html, body {
+  touch-action: none; /* Disable pinch-to-zoom and panning */
+  overflow: hidden; /* Prevent scroll */
+}
+
+.App{
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 #zoom-img {
   cursor: move;
   position: relative;
-  width: 500px;
-  height: 500px;
+  padding: 8px;
+  border: '4px solid red';
+  
 }
 
 #zoom-container {
   overflow: hidden;
   background: red;
-  height: 500px;
-  width: 500px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .button {

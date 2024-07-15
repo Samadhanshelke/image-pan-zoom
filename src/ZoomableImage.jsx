@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import  { useRef, useState, useEffect } from 'react';
 import './App.css'; // Assuming you have the styles in App.css
 
 const ZoomableImage = () => {
@@ -80,7 +80,7 @@ const ZoomableImage = () => {
       <div
         id="zoom-container"
         ref={containerRef}
-        style={{ overflow: 'hidden', background: 'red', height: '500px', width: '500px' }}
+        style={{ overflow: 'hidden', background: 'red', height: '300px', width: '300px' }}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
@@ -93,8 +93,9 @@ const ZoomableImage = () => {
           style={{
             cursor: 'move',
             position: 'relative',
-            width: '500px',
-            height: '500px',
+            width: '300px',
+            height: '300px',
+            padding:'10px'
           }}
         />
       </div>
