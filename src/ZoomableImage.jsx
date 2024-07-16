@@ -24,29 +24,27 @@ const ZoomableImage = () => {
       const currentDistance = getDistance(event.touches[0], event.touches[1]);
       if (initialDistance) {
         const scale = currentDistance / initialDistance;
-        setZoom((prevZoom) => {
-          const newZoom = Math.max(1, Math.min(prevZoom * scale, 3));
-          return newZoom;
-        });
+        setZoom((prevZoom) => Math.max(1, Math.min(prevZoom * scale, 3)));
       }
     } else if (event.touches.length === 1) {
       const deltaX = event.touches[0].clientX - initialTouchPosition.x;
       const deltaY = event.touches[0].clientY - initialTouchPosition.y;
       const container = containerRef.current;
       const img = imgRef.current;
+
       if (container && img) {
         const containerRect = container.getBoundingClientRect();
         const imgRect = img.getBoundingClientRect();
         let newX = initialPosition.x + deltaX;
         let newY = initialPosition.y + deltaY;
 
-        // Calculate the boundaries
-        const maxLeft = (containerRect.width - imgRect.width * zoom) / 2;
-        const maxTop = (containerRect.height - imgRect.height * zoom) / 2;
+        // Calculate boundaries
+        const maxOffsetX = Math.max(0, (imgRect.width * zoom - containerRect.width)/8 );
+        const maxOffsetY = Math.max(0, (imgRect.height * zoom - containerRect.height)/8);
 
         // Ensure the image stays within the container
-        newX = Math.max(maxLeft, Math.min(newX, -maxLeft));
-        newY = Math.max(maxTop, Math.min(newY, -maxTop));
+        newX = Math.max(-maxOffsetX, Math.min(newX, maxOffsetX));
+        newY = Math.max(-maxOffsetY, Math.min(newY, maxOffsetY));
 
         setPosition({ x: newX, y: newY });
       }
@@ -71,7 +69,7 @@ const ZoomableImage = () => {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    border: '4px solid red',
+    border: '4px solid blue',
   };
 
   const imgStyle = {
@@ -80,16 +78,13 @@ const ZoomableImage = () => {
     maxHeight: 'none',
     width: '100%',
     height: '100%',
-    transform: `scale(${zoom}) translate(${position.x}px, ${position.y}px)`,
+    transform: `scale(${zoom}) translate(${position.x / zoom}px, ${position.y / zoom}px)`,
     transformOrigin: 'center center',
     transition: 'transform 0.2s',
   };
 
   const handleZoomIn = () => {
-    setZoom((prevZoom) => {
-      const newZoom = Math.min(prevZoom + 0.5, 3);
-      return newZoom;
-    });
+    setZoom((prevZoom) => Math.min(prevZoom + 0.5, 3));
   };
 
   const handleZoomOut = () => {
