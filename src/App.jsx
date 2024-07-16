@@ -1,9 +1,10 @@
 import './App.css'
 import ZoomableImage from './ZoomableImage'
+import img from './img.webp'
 const App = () => {
   return (
     <div className="App">
-      <ZoomableImage />
+      <ZoomableImage img={img}/>
     </div>
   );
 };
