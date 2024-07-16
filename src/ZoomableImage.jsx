@@ -24,8 +24,17 @@ const ZoomableImage = ({ img }) => {
       const currentDistance = getDistance(event.touches[0], event.touches[1]);
       if (initialDistance) {
         const scale = currentDistance / initialDistance;
-        const newZoom = Math.max(1, Math.min(zoom * scale, 3));
-        setZoom(newZoom);
+        // const newZoom = Math.max(1, Math.min(zoom * scale, 3));
+        if(scale > 1){
+           setZoom((pre)=>{
+            return pre + 0.2
+           })
+        }else{
+          setZoom((pre)=>{
+            return pre - 0.2
+           })
+        }
+        // setZoom(newZoom);
       }
     } else if (event.touches.length === 1) {
       const deltaX = event.touches[0].clientX - initialTouchPosition.x;
@@ -70,7 +79,7 @@ const ZoomableImage = ({ img }) => {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    border: '4px solid red',
+    border: '4px solid pink',
   };
 
   const imgStyle = {
@@ -90,8 +99,7 @@ const ZoomableImage = ({ img }) => {
   };
 
   const handleZoomOut = () => {
-    setZoom(1);
-    setPosition({ x: 0, y: 0 });
+    setZoom((prevZoom) => Math.max(1, prevZoom - 0.5));
   };
 
   useEffect(() => {
@@ -116,9 +124,9 @@ const ZoomableImage = ({ img }) => {
           style={imgStyle}
         />
       </div>
-      <div className='flex gap-4 mt-4 ms-8'>
-        <button className='bg-white text-black p-2' onClick={handleZoomIn}> Zoom In </button>
-        <button className='bg-white text-black p-2' onClick={handleZoomOut}> Zoom Out </button>
+      <div className="flex gap-4 mt-4 ms-8">
+        <button className="bg-white text-black p-2" onClick={handleZoomIn}>Zoom In</button>
+        <button className="bg-white text-black p-2" onClick={handleZoomOut}>Zoom Out</button>
       </div>
     </main>
   );
