@@ -8,6 +8,7 @@ const ZoomableImage = ({ img }) => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [initialPosition, setInitialPosition] = useState({ x: 0, y: 0 });
   const [initialTouchPosition, setInitialTouchPosition] = useState({ x: 0, y: 0 });
+  const [lastTouchEnd, setLastTouchEnd] = useState(0);
 
   const handleTouchStart = (event) => {
     if (event.touches.length === 2) {
@@ -24,7 +25,7 @@ const ZoomableImage = ({ img }) => {
       const currentDistance = getDistance(event.touches[0], event.touches[1]);
       if (initialDistance) {
         const scale = currentDistance / initialDistance;
-        const newZoom = Math.max(1, Math.min(zoom * scale, 3)); 
+        const newZoom = Math.max(1, Math.min(zoom * scale, 3));
         setZoom(newZoom);
       }
     } else if (event.touches.length === 1) {
@@ -52,8 +53,22 @@ const ZoomableImage = ({ img }) => {
     }
   };
 
-  const handleTouchEnd = () => {
+  const handleTouchEnd = (event) => {
+    const now = new Date().getTime();
+    if (now - lastTouchEnd <= 300) {
+      handleDoubleTap(event);
+    }
+    setLastTouchEnd(now);
     setInitialDistance(null);
+  };
+
+  const handleDoubleTap = (event) => {
+    if (zoom === 1) {
+      setZoom(2);
+    } else {
+      setZoom(1);
+      setPosition({ x: 0, y: 0 });
+    }
   };
 
   const getDistance = (touch1, touch2) => {
