@@ -53,15 +53,26 @@ const ZoomableImage = () => {
         newY = 0
        }
        if(zoom > 1 && zoom <= 2 ){
-           if( newX < -85  || newY < -85){
+           if( newX < -85  ){
             newX = -80
-            newY = -80
-           }else if(newX > 85 || newY > 85){
-            newX = 80
-            newY = 80
+           
+           }else if(newX > 85 ){
+            newX = 80 
+            
            }
-       }
+           else if(newY > 85){
+            newY = 85
+           }
+           else if(newY < -85){ 
+            newY = -85
+           }
+          //  else if(newY > 85 ){
+          //   newY = 85
+            
+          //  }
 
+       }
+   
        if(zoom > 2 && zoom <= 3 ){
         if( newX < -100){
          newX = -100
