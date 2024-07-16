@@ -46,16 +46,19 @@ const ZoomableImage = () => {
         // console.log('maxTop',maxTop)
 
        console.log(imgRect.width,containerRect.width)
-       console.log(newX)
+       console.log(newY)
+       if(zoom < 1) return 
        if(zoom === 1){
         newX = 0
         newY = 0
        }
        if(zoom > 1 && zoom <= 2 ){
-           if( newX < -85){
+           if( newX < -85  || newY < -85){
             newX = -80
-           }else if(newX > 85){
+            newY = -80
+           }else if(newX > 85 || newY > 85){
             newX = 80
+            newY = 80
            }
        }
 
