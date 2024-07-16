@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const ZoomableImage = () => {
   const containerRef = useRef(null);
@@ -64,6 +64,9 @@ const ZoomableImage = () => {
     );
   };
 
+  useEffect(()=>{
+    adjustPositionForZoom(zoom)
+  },[zoom,position])
   const adjustPositionForZoom = (newZoom) => {
     const container = containerRef.current;
     const img = imgRef.current;
