@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-
-const ZoomableImage = ({ src }) => {
+import img from './pexels-jckulkarni-910213.jpg'
+const ZoomableImage = () => {
   const containerRef = useRef(null);
   const imgRef = useRef(null);
   const [zoom, setZoom] = useState(1);
@@ -8,17 +8,13 @@ const ZoomableImage = ({ src }) => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [initialPosition, setInitialPosition] = useState({ x: 0, y: 0 });
   const [initialTouchPosition, setInitialTouchPosition] = useState({ x: 0, y: 0 });
-  const [lastTap, setLastTap] = useState(0);
 
   const handleTouchStart = (event) => {
     if (event.touches.length === 2) {
       const distance = getDistance(event.touches[0], event.touches[1]);
       setInitialDistance(distance);
     } else if (event.touches.length === 1) {
-      setInitialTouchPosition({
-        x: event.touches[0].clientX,
-        y: event.touches[0].clientY
-      });
+      setInitialTouchPosition({ x: event.touches[0].clientX, y: event.touches[0].clientY });
       setInitialPosition(position);
     }
   };
@@ -29,37 +25,61 @@ const ZoomableImage = ({ src }) => {
       if (initialDistance) {
         const scale = currentDistance / initialDistance;
         setZoom((prevZoom) => Math.max(1, Math.min(prevZoom * scale, 3)));
-        if (scale > 1) {
-          setZoom((pre) => (pre > 3 ? 3 : pre + 0.1));
-        } else {
-          setZoom((pre) => (pre <= 1 ? 1 : pre - 0.1));
-        }
       }
     } else if (event.touches.length === 1) {
       const deltaX = event.touches[0].clientX - initialTouchPosition.x;
       const deltaY = event.touches[0].clientY - initialTouchPosition.y;
-
       const container = containerRef.current;
       const img = imgRef.current;
-
       if (container && img) {
         const containerRect = container.getBoundingClientRect();
         const imgRect = img.getBoundingClientRect();
-
         let newX = initialPosition.x + deltaX;
         let newY = initialPosition.y + deltaY;
+
+        // Calculate the boundaries
+        const maxLeft = containerRect.width - imgRect.width * zoom;
+        const maxTop = containerRect.height - imgRect.height * zoom;
+        console.log('newX',newX)
+        console.log('newY',newY)
+        console.log('maxLeft',maxLeft)
+        console.log('maxTop',maxTop)
+       
+        
+        // Ensure the image stays within the container
+        newX = Math.min(0, Math.max(newX, maxLeft));
+        newY = Math.min(0, Math.max(newY, maxTop));
+      
+        setPosition({ x: newX, y: newY });
+      }
+    }
+  };
+
+  useEffect(() => {
+    const container = containerRef.current;
+    const img = imgRef.current;
+    if (container && img) {
+      const containerRect = container.getBoundingClientRect();
+      const imgRect = img.getBoundingClientRect();
+
+     
+        let newX = position.x;
+        let newY = position.y;
 
         const maxLeft = containerRect.width - imgRect.width;
         const maxTop = containerRect.height - imgRect.height;
 
         newX = Math.min(0, Math.max(newX, maxLeft));
         newY = Math.min(0, Math.max(newY, maxTop));
-
+        console.log(maxLeft)
         setPosition({ x: newX, y: newY });
-      }
+       
+     
     }
-  };
-
+  //  console.log(img.getBoundingClientRect().width)
+  
+   
+  }, [position]);
   const handleTouchEnd = () => {
     setInitialDistance(null);
   };
@@ -70,56 +90,6 @@ const ZoomableImage = ({ src }) => {
     );
   };
 
-  useEffect(() => {
-    const container = containerRef.current;
-    const img = imgRef.current;
-    if (container && img) {
-      const containerRect = container.getBoundingClientRect();
-      const imgRect = img.getBoundingClientRect();
-
-      let newX = position.x;
-      let newY = position.y;
-
-      const maxLeft = containerRect.width - imgRect.width;
-      const maxTop = containerRect.height - imgRect.height;
-
-      newX = Math.min(0, Math.max(newX, maxLeft));
-      newY = Math.min(0, Math.max(newY, maxTop));
-
-      setPosition({ x: newX, y: newY });
-    }
-  }, [position]);
-
-  const handleZoomIn = () => {
-    setZoom((prevZoom) => Math.min(prevZoom * 1.2, 3));
-  };
-
-  const handleZoomOut = () => {
-    const img = imgRef.current;
-    const imgRect = img.getBoundingClientRect();
-    console.log(imgRect.width);
-    console.log(position);
-
-    setZoom((prevZoom) => {
-      const newZoom = Math.max(prevZoom * 0.9, 1);
-      if (newZoom === 1) {
-        setZoom(1);
-      }
-      return newZoom;
-    });
-  };
-
-  const handleDoubleTap = (event) => {
-    const currentTime = new Date().getTime();
-    const tapLength = currentTime - lastTap;
-    if (tapLength < 300 && tapLength > 0) {
-      setZoom((prevZoom) => (prevZoom === 1 ? 3 : 1));
-      setPosition({ x: 0, y: 0 });
-    } else {
-      setLastTap(currentTime);
-    }
-  };
-
   const containerStyle = {
     position: 'relative',
     overflow: 'hidden',
@@ -128,18 +98,26 @@ const ZoomableImage = ({ src }) => {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    border: '4px solid red'
+    border: '4px solid red',
   };
 
   const imgStyle = {
     position: 'absolute',
-    top: `${position.y}px`,
-    left: `${position.x}px`,
-    width: `${zoom * 100}%`,
-    height: `${zoom * 100}%`,
     maxWidth: 'none',
     maxHeight: 'none',
-    transition: 'width 0.2s, height 0.2s, transform 0.2s',
+    width: '100%',
+    height: '100%',
+    transform: `scale(${zoom}) translate(${position.x}px, ${position.y}px)`,
+    transformOrigin: 'center center',
+    transition: 'transform 0.2s',
+  };
+
+  const handleZoomIn = () => {
+    setZoom((prevZoom) => Math.min(prevZoom * 1.2, 3));
+  };
+
+  const handleZoomOut = () => {
+    setZoom((prevZoom) => Math.max(prevZoom * 0.9, 1));
   };
 
   return (
@@ -150,23 +128,17 @@ const ZoomableImage = ({ src }) => {
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
-        onDoubleClick={handleDoubleTap}
       >
         <img
           ref={imgRef}
-          src="https://imgs.search.brave.com/qKxobAam5O8ZbQKmKqPUlsS-PxpUHva5I0TNOgwIi-Q/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly93d3cu/aXN0b2NrcGhvdG8u/Y29tL3Jlc291cmNl/cy9pbWFnZXMvRnJl/ZVBob3Rvcy9GcmVl/LVBob3RvLTc0MHg0/OTItMjE1NDU1Njgy/OC5qcGc"
+          src={img}
           alt="Zoomable"
           style={imgStyle}
-          onTouchStart={handleTouchStart}
         />
       </div>
       <div className='flex gap-4 mt-4 ms-8'>
-        <button className='bg-white text-black p-2' onClick={handleZoomIn}>
-          Zoom In
-        </button>
-        <button className='bg-white text-black p-2' onClick={handleZoomOut}>
-          Zoom Out
-        </button>
+        <button className='bg-white text-black p-2' onClick={handleZoomIn}> Zoom In </button>
+        <button className='bg-white text-black p-2' onClick={handleZoomOut}> Zoom Out </button>
       </div>
     </main>
   );
