@@ -70,7 +70,7 @@ const ZoomableImage = ({ img }) => {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    border: '4px solid blue',
+    border: '4px solid red',
   };
 
   const imgStyle = {
