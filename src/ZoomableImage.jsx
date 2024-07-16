@@ -25,16 +25,15 @@ const ZoomableImage = () => {
       if (initialDistance) {
         const scale = currentDistance / initialDistance;
         const newZoom = Math.max(1, Math.min(zoom * scale, 3));
-        const adjustedPosition = adjustPositionForZoom(newZoom);
         setZoom(newZoom);
-        setPosition(adjustedPosition);
+        
       }
     } else if (event.touches.length === 1) {
       const deltaX = event.touches[0].clientX - initialTouchPosition.x;
       const deltaY = event.touches[0].clientY - initialTouchPosition.y;
       const container = containerRef.current;
       const img = imgRef.current;
-
+    
       if (container && img) {
         const containerRect = container.getBoundingClientRect();
         const imgRect = img.getBoundingClientRect();
@@ -64,31 +63,8 @@ const ZoomableImage = () => {
     );
   };
 
-  useEffect(()=>{
-    adjustPositionForZoom(zoom)
-  },[zoom,position])
-  const adjustPositionForZoom = (newZoom) => {
-    const container = containerRef.current;
-    const img = imgRef.current;
 
-    if (container && img) {
-      const containerRect = container.getBoundingClientRect();
-      const imgRect = img.getBoundingClientRect();
-
-      // Calculate boundaries
-      const maxOffsetX = Math.max(0, (imgRect.width * newZoom - containerRect.width) /8 );
-      const maxOffsetY = Math.max(0, (imgRect.height * newZoom - containerRect.height) / 8);
-
-      // Adjust position
-      let newX = position.x ;
-      let newY = position.y ;
-      newX = Math.max(-maxOffsetX, Math.min(newX, maxOffsetX));
-      newY = Math.max(-maxOffsetY, Math.min(newY, maxOffsetY));
-    
-      return { x: newX, y: newY };
-    }
-    return position;
-  };
+  
 
   const containerStyle = {
     position: 'relative',
@@ -98,7 +74,7 @@ const ZoomableImage = () => {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    border: '4px solid pink',
+    border: '4px solid blue',
   };
 
   const imgStyle = {
@@ -114,9 +90,9 @@ const ZoomableImage = () => {
 
   const handleZoomIn = () => {
     const newZoom = Math.min(zoom + 0.5, 3);
-    const adjustedPosition = adjustPositionForZoom(newZoom);
+    // const adjustedPosition = adjustPositionForZoom(newZoom);
     setZoom(newZoom);
-    setPosition(adjustedPosition);
+    // setPosition(adjustedPosition);
   };
 
   const handleZoomOut = () => {
@@ -124,8 +100,8 @@ const ZoomableImage = () => {
     if (newZoom === 1) {
       setPosition({ x: 0, y: 0 });
     } else {
-      const adjustedPosition = adjustPositionForZoom(newZoom);
-      setPosition(adjustedPosition);
+      // const adjustedPosition = adjustPositionForZoom(newZoom);
+      // setPosition(adjustedPosition);
     }
     setZoom(newZoom);
   };
