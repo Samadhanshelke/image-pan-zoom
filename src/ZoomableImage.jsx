@@ -79,8 +79,8 @@ const ZoomableImage = () => {
       // Adjust position
       let newX = position.x ;
       let newY = position.y ;
-      newX = Math.max(-maxOffsetX, Math.min(newX, maxOffsetX) / 16);
-      newY = Math.max(-maxOffsetY, Math.min(newY, maxOffsetY) / 16);
+      newX = Math.max(-maxOffsetX, Math.min(newX, maxOffsetX));
+      newY = Math.max(-maxOffsetY, Math.min(newY, maxOffsetY));
     
       return { x: newX, y: newY };
     }
@@ -95,7 +95,7 @@ const ZoomableImage = () => {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    border: '4px solid red',
+    border: '4px solid pink',
   };
 
   const imgStyle = {
