@@ -39,47 +39,45 @@ const ZoomableImage = () => {
 
         // Calculate the boundaries
         const maxLeft = containerRect.width - imgRect.width * zoom;
-        const maxTop = containerRect.height - imgRect.height * zoom;
-        console.log('newX',newX)
-        console.log('newY',newY)
+        const maxTop = containerRect.height - imgRect.height * zoom ;
+        // console.log('newX',newX)
+        // console.log('newY',newY)
         console.log('maxLeft',maxLeft)
-        console.log('maxTop',maxTop)
-       
+        // console.log('maxTop',maxTop)
+
+       console.log(imgRect.width,containerRect.width)
+       console.log(newX)
+       if(zoom === 1){
+        newX = 0
+        newY = 0
+       }
+       if(zoom > 1 && zoom <= 2 ){
+           if( newX < -85){
+            newX = -80
+           }else if(newX > 85){
+            newX = 80
+           }
+       }
+
+       if(zoom > 2 && zoom <= 3 ){
+        if( newX < -100){
+         newX = -100
+        }else if(newX > 100){
+         newX = 100
+        }
+    }
+
+
+
         
         // Ensure the image stays within the container
-        newX = Math.min(0, Math.max(newX, maxLeft));
-        newY = Math.min(0, Math.max(newY, maxTop));
+        // newX = Math.min(0, Math.max(newX, maxLeft));
+        // newY = Math.min(0, Math.max(newY, maxTop));
       
         setPosition({ x: newX, y: newY });
       }
     }
   };
-
-  useEffect(() => {
-    const container = containerRef.current;
-    const img = imgRef.current;
-    if (container && img) {
-      const containerRect = container.getBoundingClientRect();
-      const imgRect = img.getBoundingClientRect();
-
-     
-        let newX = position.x;
-        let newY = position.y;
-
-        const maxLeft = containerRect.width - imgRect.width;
-        const maxTop = containerRect.height - imgRect.height;
-
-        newX = Math.min(0, Math.max(newX, maxLeft));
-        newY = Math.min(0, Math.max(newY, maxTop));
-        console.log(maxLeft)
-        setPosition({ x: newX, y: newY });
-       
-     
-    }
-  //  console.log(img.getBoundingClientRect().width)
-  
-   
-  }, [position]);
   const handleTouchEnd = () => {
     setInitialDistance(null);
   };
@@ -113,7 +111,9 @@ const ZoomableImage = () => {
   };
 
   const handleZoomIn = () => {
-    setZoom((prevZoom) => Math.min(prevZoom * 1.2, 3));
+   setZoom((pre)=>{
+    return pre + 1
+   })
   };
 
   const handleZoomOut = () => {
@@ -131,7 +131,7 @@ const ZoomableImage = () => {
       >
         <img
           ref={imgRef}
-          src={img}
+          src={'https://imgs.search.brave.com/4uldFdZO5-L20VuZb5wkXP9AGXhscn3hi92hlz_6Lb4/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93d3cu/aXN0b2NrcGhvdG8u/Y29tL3Jlc291cmNl/cy9pbWFnZXMvRnJl/ZVBob3Rvcy9GcmVl/LVBob3RvLTc0MHg0/OTItMjE1NDU1Njgy/OC5qcGc'}
           alt="Zoomable"
           style={imgStyle}
         />
