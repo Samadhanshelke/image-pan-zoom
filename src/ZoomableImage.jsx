@@ -24,7 +24,10 @@ const ZoomableImage = () => {
       const currentDistance = getDistance(event.touches[0], event.touches[1]);
       if (initialDistance) {
         const scale = currentDistance / initialDistance;
-        setZoom((prevZoom) => Math.max(1, Math.min(prevZoom * scale, 3)));
+        const newZoom = Math.max(1, Math.min(zoom * scale, 3));
+        const adjustedPosition = adjustPositionForZoom(newZoom);
+        setZoom(newZoom);
+        setPosition(adjustedPosition);
       }
     } else if (event.touches.length === 1) {
       const deltaX = event.touches[0].clientX - initialTouchPosition.x;
@@ -39,8 +42,8 @@ const ZoomableImage = () => {
         let newY = initialPosition.y + deltaY;
 
         // Calculate boundaries
-        const maxOffsetX = Math.max(0, (imgRect.width * zoom - containerRect.width)/8 );
-        const maxOffsetY = Math.max(0, (imgRect.height * zoom - containerRect.height)/8);
+        const maxOffsetX = Math.max(0, (imgRect.width * zoom - containerRect.width) / 8);
+        const maxOffsetY = Math.max(0, (imgRect.height * zoom - containerRect.height) / 8);
 
         // Ensure the image stays within the container
         newX = Math.max(-maxOffsetX, Math.min(newX, maxOffsetX));
@@ -61,6 +64,29 @@ const ZoomableImage = () => {
     );
   };
 
+  const adjustPositionForZoom = (newZoom) => {
+    const container = containerRef.current;
+    const img = imgRef.current;
+
+    if (container && img) {
+      const containerRect = container.getBoundingClientRect();
+      const imgRect = img.getBoundingClientRect();
+
+      // Calculate boundaries
+      const maxOffsetX = Math.max(0, (imgRect.width * newZoom - containerRect.width) /8 );
+      const maxOffsetY = Math.max(0, (imgRect.height * newZoom - containerRect.height) / 8);
+
+      // Adjust position
+      let newX = position.x ;
+      let newY = position.y ;
+      newX = Math.max(-maxOffsetX, Math.min(newX, maxOffsetX) / 16);
+      newY = Math.max(-maxOffsetY, Math.min(newY, maxOffsetY) / 16);
+    
+      return { x: newX, y: newY };
+    }
+    return position;
+  };
+
   const containerStyle = {
     position: 'relative',
     overflow: 'hidden',
@@ -69,7 +95,7 @@ const ZoomableImage = () => {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    border: '4px solid blue',
+    border: '4px solid red',
   };
 
   const imgStyle = {
@@ -84,17 +110,21 @@ const ZoomableImage = () => {
   };
 
   const handleZoomIn = () => {
-    setZoom((prevZoom) => Math.min(prevZoom + 0.5, 3));
+    const newZoom = Math.min(zoom + 0.5, 3);
+    const adjustedPosition = adjustPositionForZoom(newZoom);
+    setZoom(newZoom);
+    setPosition(adjustedPosition);
   };
 
   const handleZoomOut = () => {
-    setZoom((prevZoom) => {
-      const newZoom = Math.max(prevZoom - 0.5, 1);
-      if (newZoom === 1) {
-        setPosition({ x: 0, y: 0 });
-      }
-      return newZoom;
-    });
+    const newZoom = Math.max(zoom - 0.5, 1);
+    if (newZoom === 1) {
+      setPosition({ x: 0, y: 0 });
+    } else {
+      const adjustedPosition = adjustPositionForZoom(newZoom);
+      setPosition(adjustedPosition);
+    }
+    setZoom(newZoom);
   };
 
   return (
