@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
-import img from './pexels-jckulkarni-910213.jpg'
+import { useRef, useState } from 'react';
+
 const ZoomableImage = () => {
   const containerRef = useRef(null);
   const imgRef = useRef(null);
@@ -24,7 +24,10 @@ const ZoomableImage = () => {
       const currentDistance = getDistance(event.touches[0], event.touches[1]);
       if (initialDistance) {
         const scale = currentDistance / initialDistance;
-        setZoom((prevZoom) => Math.max(1, Math.min(prevZoom * scale, 3)));
+        setZoom((prevZoom) => {
+          const newZoom = Math.max(1, Math.min(prevZoom * scale, 3));
+          return newZoom;
+        });
       }
     } else if (event.touches.length === 1) {
       const deltaX = event.touches[0].clientX - initialTouchPosition.x;
@@ -38,60 +41,18 @@ const ZoomableImage = () => {
         let newY = initialPosition.y + deltaY;
 
         // Calculate the boundaries
-        const maxLeft = containerRect.width - imgRect.width * zoom;
-        const maxTop = containerRect.height - imgRect.height * zoom ;
-        // console.log('newX',newX)
-        // console.log('newY',newY)
-        console.log('maxLeft',maxLeft)
-        // console.log('maxTop',maxTop)
+        const maxLeft = (containerRect.width - imgRect.width * zoom) / 2;
+        const maxTop = (containerRect.height - imgRect.height * zoom) / 2;
 
-       console.log(imgRect.width,containerRect.width)
-       console.log(newY)
-       if(zoom < 1) return 
-       if(zoom === 1){
-        newX = 0
-        newY = 0
-       }
-       if(zoom > 1 && zoom <= 2 ){
-           if( newX < -85  ){
-            newX = -80
-           
-           }else if(newX > 85 ){
-            newX = 80 
-            
-           }
-           else if(newY > 85){
-            newY = 85
-           }
-           else if(newY < -85){ 
-            newY = -85
-           }
-          //  else if(newY > 85 ){
-          //   newY = 85
-            
-          //  }
-
-       }
-   
-       if(zoom > 2 && zoom <= 3 ){
-        if( newX < -100){
-         newX = -100
-        }else if(newX > 100){
-         newX = 100
-        }
-    }
-
-
-
-        
         // Ensure the image stays within the container
-        // newX = Math.min(0, Math.max(newX, maxLeft));
-        // newY = Math.min(0, Math.max(newY, maxTop));
-      
+        newX = Math.max(maxLeft, Math.min(newX, -maxLeft));
+        newY = Math.max(maxTop, Math.min(newY, -maxTop));
+
         setPosition({ x: newX, y: newY });
       }
     }
   };
+
   const handleTouchEnd = () => {
     setInitialDistance(null);
   };
@@ -125,13 +86,20 @@ const ZoomableImage = () => {
   };
 
   const handleZoomIn = () => {
-   setZoom((pre)=>{
-    return pre + 1
-   })
+    setZoom((prevZoom) => {
+      const newZoom = Math.min(prevZoom + 0.5, 3);
+      return newZoom;
+    });
   };
 
   const handleZoomOut = () => {
-    setZoom((prevZoom) => Math.max(prevZoom * 0.9, 1));
+    setZoom((prevZoom) => {
+      const newZoom = Math.max(prevZoom - 0.5, 1);
+      if (newZoom === 1) {
+        setPosition({ x: 0, y: 0 });
+      }
+      return newZoom;
+    });
   };
 
   return (
