@@ -11,22 +11,22 @@ const ZoomableImage = ({ img }) => {
   const [lastTap, setLastTap] = useState(0);
 
   const handleTouchStart = (event) => {
-    const currentTime = new Date().getTime();
-    const tapLength = currentTime - lastTap;
+    if (event.touches.length === 1) {
+      const currentTime = new Date().getTime();
+      const tapLength = currentTime - lastTap;
 
-    if (tapLength < 300 && tapLength > 0) {
-      // Double tap detected
-      handleDoubleTap();
-    } else {
-      if (event.touches.length === 2) {
-        const distance = getDistance(event.touches[0], event.touches[1]);
-        initialDistanceRef.current = distance;
-      } else if (event.touches.length === 1) {
+      if (tapLength < 300 && tapLength > 0) {
+        // Double tap detected
+        handleDoubleTap();
+      } else {
         initialTouchPositionRef.current = { x: event.touches[0].clientX, y: event.touches[0].clientY };
         initialPositionRef.current = positionRef.current;
       }
+      setLastTap(currentTime);
+    } else if (event.touches.length === 2) {
+      const distance = getDistance(event.touches[0], event.touches[1]);
+      initialDistanceRef.current = distance;
     }
-    setLastTap(currentTime);
   };
 
   const handleTouchMove = (event) => {
@@ -86,7 +86,7 @@ const ZoomableImage = ({ img }) => {
 
   const handleDoubleTap = () => {
     if (zoomRef.current === 1) {
-      zoomRef.current = 5; // Zoom in
+      zoomRef.current = 2; // Zoom in
     } else {
       zoomRef.current = 1; // Zoom out
     }
@@ -101,7 +101,7 @@ const ZoomableImage = ({ img }) => {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    border: '4px solid blue',
+    border: '4px solid red',
   };
 
   const imgStyle = {
