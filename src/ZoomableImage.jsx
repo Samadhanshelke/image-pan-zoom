@@ -42,8 +42,8 @@ const ZoomableImage = ({ img }) => {
         let newY = initialPositionRef.current.y + deltaY;
 
         // Calculate boundaries
-        const maxOffsetX = Math.max(0, (imgRect.width * zoomRef.current - containerRect.width) / 8);
-        const maxOffsetY = Math.max(0, (imgRect.height * zoomRef.current - containerRect.height) / 8);
+        const maxOffsetX = Math.max(0, (imgRect.width * zoomRef.current - containerRect.width) / 4);
+        const maxOffsetY = Math.max(0, (imgRect.height * zoomRef.current - containerRect.height) / 4);
 
         // Ensure the image stays within the container
         newX = Math.max(-maxOffsetX, Math.min(newX, maxOffsetX));
@@ -83,7 +83,7 @@ const ZoomableImage = ({ img }) => {
       }
     }
   };
-
+  
   const containerStyle = {
     position: 'relative',
     overflow: 'hidden',
@@ -92,14 +92,15 @@ const ZoomableImage = ({ img }) => {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    border: '4px solid red',
+    border: '4px solid blue',
   };
-
+  
   const imgStyle = {
     position: 'absolute',
     maxWidth: 'none',
     maxHeight: 'none',
     width: '100%',
+    transform : `scale(${zoomRef.current}) translate(${positionRef.current.x / zoomRef.current}px, ${positionRef.current.y / zoomRef.current}px)`,
     height: '100%',
     transformOrigin: 'center center',
     transition: 'transform 0.2s',
@@ -111,6 +112,15 @@ const ZoomableImage = ({ img }) => {
       updateImageTransform();
     }
   }, [zoomRef.current]);
+
+  const handleZoomIn = () => {
+    zoomRef.current =  zoomRef.current + 0.2;
+  };
+
+  const handleZoomOut = () => {
+    zoomRef.current =  zoomRef.current - 0.2;
+  };
+
 
   return (
     <main>
@@ -127,6 +137,14 @@ const ZoomableImage = ({ img }) => {
           alt="Zoomable"
           style={imgStyle}
         />
+      </div>
+      <div className='flex gap-4 mt-4 ms-8'>
+        <button className='bg-white text-black p-2' onClick={handleZoomIn}>
+          Zoom In
+        </button>
+        <button className='bg-white text-black p-2' onClick={handleZoomOut}>
+          Zoom Out
+        </button>
       </div>
     </main>
   );
