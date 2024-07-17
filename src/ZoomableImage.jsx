@@ -62,6 +62,7 @@ const ZoomableImage = ({ img }) => {
     }
     lastTouchEndRef.current = now;
     initialDistanceRef.current = null;
+    positionRef.current = {x:0,y:0}
   };
 
   const getDistance = (touch1, touch2) => {
@@ -85,7 +86,7 @@ const ZoomableImage = ({ img }) => {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    border: '4px solid pink',
+    border: '4px solid red',
   };
 
   const imgStyle = {
