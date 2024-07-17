@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const ZoomableImage = ({ img }) => {
   const containerRef = useRef(null);
@@ -9,6 +9,7 @@ const ZoomableImage = ({ img }) => {
   const initialPositionRef = useRef({ x: 0, y: 0 });
   const initialTouchPositionRef = useRef({ x: 0, y: 0 });
   const lastTouchEndRef = useRef(0);
+  const [, setRenderTrigger] = useState(0); // Add this state to trigger re-renders
 
   const handleTouchStart = (event) => {
     if (event.touches.length === 2) {
@@ -27,10 +28,9 @@ const ZoomableImage = ({ img }) => {
         const scale = currentDistance / initialDistanceRef.current;
         const newZoom = Math.max(1, Math.min(zoomRef.current * scale, 3));
         zoomRef.current = newZoom;
-        // updateImageTransform();
+        setRenderTrigger((prev) => prev + 1); // Trigger re-render
       }
     } else if (event.touches.length === 1) {
-      if(zoomRef.current === 0) return;
       const deltaX = event.touches[0].clientX - initialTouchPositionRef.current.x;
       const deltaY = event.touches[0].clientY - initialTouchPositionRef.current.y;
       const container = containerRef.current;
@@ -51,7 +51,7 @@ const ZoomableImage = ({ img }) => {
         newY = Math.max(-maxOffsetY, Math.min(newY, maxOffsetY));
 
         positionRef.current = { x: newX, y: newY };
-        // updateImageTransform();
+        setRenderTrigger((prev) => prev + 1); // Trigger re-render
       }
     }
   };
@@ -63,7 +63,6 @@ const ZoomableImage = ({ img }) => {
     }
     lastTouchEndRef.current = now;
     initialDistanceRef.current = null;
-    positionRef.current = {x:0,y:0}
   };
 
   const getDistance = (touch1, touch2) => {
@@ -72,23 +71,16 @@ const ZoomableImage = ({ img }) => {
     );
   };
 
-  // const updateImageTransform = () => {
-  //   const img = imgRef.current;
-  //   if (img) {
-  //     img.style.transform = `scale(${zoomRef.current}) translate(${positionRef.current.x / zoomRef.current}px, ${positionRef.current.y / zoomRef.current}px)`;
-  //   }
-  // };
-
   const handleZoomIn = () => {
-    console.log('calling')
-    console.log(zoomRef.current  +  1.2)
-    const newZoom =  zoomRef.current  +  1.2;
-    zoomRef.current = newZoom
+    const newZoom = zoomRef.current + 0.2;
+    zoomRef.current = newZoom;
+    setRenderTrigger((prev) => prev + 1); // Trigger re-render
   };
 
   const handleZoomOut = () => {
-    const newZoom =  Math.min(zoomRef.current * 0.9, 3);
-    zoomRef.current = newZoom
+    const newZoom = Math.max(1, zoomRef.current - 0.2);
+    zoomRef.current = newZoom;
+    setRenderTrigger((prev) => prev + 1); // Trigger re-render
   };
 
   const containerStyle = {
@@ -99,7 +91,7 @@ const ZoomableImage = ({ img }) => {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    border: '4px solid red',
+    border: '4px solid blue',
   };
 
   const imgStyle = {
@@ -111,13 +103,12 @@ const ZoomableImage = ({ img }) => {
     transformOrigin: 'center center',
     transition: 'transform 0.2s',
     transform: `scale(${zoomRef.current}) translate(${positionRef.current.x / zoomRef.current}px, ${positionRef.current.y / zoomRef.current}px)`,
-
   };
 
   useEffect(() => {
     if (zoomRef.current === 1) {
       positionRef.current = { x: 0, y: 0 };
-      // updateImageTransform();
+      setRenderTrigger((prev) => prev + 1); // Trigger re-render
     }
   }, [zoomRef.current]);
 
@@ -138,8 +129,8 @@ const ZoomableImage = ({ img }) => {
         />
       </div>
       <div className='flex gap-4 mt-4 ms-8'>
-        <button className='bg-white text-black p-2' onClick={handleZoomIn}> Zoom In </button>
-        <button className='bg-white text-black p-2' onClick={handleZoomOut}> Zoom Out </button>
+        <button className='bg-white text-black p-2' onClick={handleZoomIn}>Zoom In</button>
+        <button className='bg-white text-black p-2' onClick={handleZoomOut}>Zoom Out</button>
       </div>
     </main>
   );
