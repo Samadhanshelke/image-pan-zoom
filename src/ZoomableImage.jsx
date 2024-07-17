@@ -42,8 +42,8 @@ const ZoomableImage = ({ img }) => {
         let newY = initialPositionRef.current.y + deltaY;
 
         // Calculate boundaries
-        const maxOffsetX = Math.max(0, (imgRect.width * zoomRef.current - containerRect.width) / 4);
-        const maxOffsetY = Math.max(0, (imgRect.height * zoomRef.current - containerRect.height) / 4);
+        const maxOffsetX = Math.max(0, (imgRect.width * zoomRef.current - containerRect.width) / 12);
+        const maxOffsetY = Math.max(0, (imgRect.height * zoomRef.current - containerRect.height) / 12);
 
         // Ensure the image stays within the container
         newX = Math.max(-maxOffsetX, Math.min(newX, maxOffsetX));
