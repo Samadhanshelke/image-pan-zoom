@@ -53,23 +53,23 @@ const ZoomableImage = ({ img }) => {
     }
   };
 
-  const handleTouchEnd = (event) => {
+  const handleTouchEnd = () => {
     const now = new Date().getTime();
     if (now - lastTouchEnd <= 300) {
-      handleDoubleTap(event);
+      // handleDoubleTap(event);
     }
     setLastTouchEnd(now);
     setInitialDistance(null);
   };
 
-  const handleDoubleTap = (event) => {
-    if (zoom === 1) {
-      setZoom(2);
-    } else {
-      setZoom(1);
-      setPosition({ x: 0, y: 0 });
-    }
-  };
+  // const handleDoubleTap = (event) => {
+  //   if (zoom === 1) {
+  //     setZoom(2);
+  //   } else {
+  //     setZoom(1);
+  //     setPosition({ x: 0, y: 0 });
+  //   }
+  // };
 
   const getDistance = (touch1, touch2) => {
     return Math.sqrt(
@@ -99,14 +99,14 @@ const ZoomableImage = ({ img }) => {
     transition: 'transform 0.2s',
   };
 
-  const handleZoomIn = () => {
-    const newZoom = Math.min(zoom + 0.5, 3);
-    setZoom(newZoom);
-  };
+  // const handleZoomIn = () => {
+  //   const newZoom = Math.min(zoom + 0.5, 3);
+  //   setZoom(newZoom);
+  // };
 
-  const handleZoomOut = () => {
-    setZoom((prevZoom) => Math.max(1, prevZoom - 0.5));
-  };
+  // const handleZoomOut = () => {
+  //   setZoom((prevZoom) => Math.max(1, prevZoom - 0.5));
+  // };
 
   useEffect(() => {
     if (zoom === 1) {
@@ -130,10 +130,10 @@ const ZoomableImage = ({ img }) => {
           style={imgStyle}
         />
       </div>
-      <div className="flex gap-4 mt-4 ms-8">
+      {/* <div className="flex gap-4 mt-4 ms-8">
         <button className="bg-white text-black p-2" onClick={handleZoomIn}>Zoom In</button>
         <button className="bg-white text-black p-2" onClick={handleZoomOut}>Zoom Out</button>
-      </div>
+      </div> */}
     </main>
   );
 };
