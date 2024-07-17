@@ -73,15 +73,22 @@ const ZoomableImage = ({ img }) => {
   const updateImageTransform = () => {
     const img = imgRef.current;
     if (img) {
-      img.style.transform = `scale(${zoomRef.current}) translate(${positionRef.current.x / zoomRef.current}px, ${positionRef.current.y / zoomRef.current}px)`;
+      if (zoomRef.current === 1) {
+        img.style.transform = 'none';
+        img.style.width = '100%';
+        img.style.height = '100%';
+        positionRef.current = { x: 0, y: 0 };
+      } else {
+        img.style.transform = `scale(${zoomRef.current}) translate(${positionRef.current.x / zoomRef.current}px, ${positionRef.current.y / zoomRef.current}px)`;
+      }
     }
   };
 
   const containerStyle = {
     position: 'relative',
     overflow: 'hidden',
-    width: '295px',
-    height: '300px',
+    width: '340px',
+    height: '400px',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',

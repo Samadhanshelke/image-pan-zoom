@@ -3,7 +3,7 @@ import ZoomableImage from './ZoomableImage'
 import img from './img.webp'
 const App = () => {
   return (
-    <div className="App">
+    <div className="App" >
       <ZoomableImage img={img}/>
     </div>
   );
