@@ -25,7 +25,7 @@ const ZoomableImage = ({ img }) => {
       const currentDistance = getDistance(event.touches[0], event.touches[1]);
       if (initialDistanceRef.current) {
         const scale = currentDistance / initialDistanceRef.current;
-        const newZoom = Math.max(1, Math.min(zoomRef.current * scale, 3));
+        const newZoom = Math.max(1, Math.min(zoomRef.current * scale, 5));
         zoomRef.current = newZoom;
         updateImageTransform();
       }
