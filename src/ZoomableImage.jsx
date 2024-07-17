@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const ZoomableImage = ({ img }) => {
   const containerRef = useRef(null);
@@ -8,16 +8,25 @@ const ZoomableImage = ({ img }) => {
   const positionRef = useRef({ x: 0, y: 0 });
   const initialPositionRef = useRef({ x: 0, y: 0 });
   const initialTouchPositionRef = useRef({ x: 0, y: 0 });
-  const lastTouchEndRef = useRef(0);
+  const [lastTap, setLastTap] = useState(0);
 
   const handleTouchStart = (event) => {
-    if (event.touches.length === 2) {
-      const distance = getDistance(event.touches[0], event.touches[1]);
-      initialDistanceRef.current = distance;
-    } else if (event.touches.length === 1) {
-      initialTouchPositionRef.current = { x: event.touches[0].clientX, y: event.touches[0].clientY };
-      initialPositionRef.current = positionRef.current;
+    const currentTime = new Date().getTime();
+    const tapLength = currentTime - lastTap;
+
+    if (tapLength < 300 && tapLength > 0) {
+      // Double tap detected
+      handleDoubleTap();
+    } else {
+      if (event.touches.length === 2) {
+        const distance = getDistance(event.touches[0], event.touches[1]);
+        initialDistanceRef.current = distance;
+      } else if (event.touches.length === 1) {
+        initialTouchPositionRef.current = { x: event.touches[0].clientX, y: event.touches[0].clientY };
+        initialPositionRef.current = positionRef.current;
+      }
     }
+    setLastTap(currentTime);
   };
 
   const handleTouchMove = (event) => {
@@ -34,21 +43,17 @@ const ZoomableImage = ({ img }) => {
       const deltaY = event.touches[0].clientY - initialTouchPositionRef.current.y;
       const container = containerRef.current;
       const img = imgRef.current;
-
       if (container && img) {
         const containerRect = container.getBoundingClientRect();
         const imgRect = img.getBoundingClientRect();
         let newX = initialPositionRef.current.x + deltaX;
         let newY = initialPositionRef.current.y + deltaY;
-
         // Calculate boundaries
-        const maxOffsetX = Math.max(0, (imgRect.width * zoomRef.current - containerRect.width) / 12);
-        const maxOffsetY = Math.max(0, (imgRect.height * zoomRef.current - containerRect.height) / 12);
-
+        const maxOffsetX = Math.max(0, (imgRect.width * zoomRef.current - containerRect.width) / 8);
+        const maxOffsetY = Math.max(0, (imgRect.height * zoomRef.current - containerRect.height) / 8);
         // Ensure the image stays within the container
         newX = Math.max(-maxOffsetX, Math.min(newX, maxOffsetX));
         newY = Math.max(-maxOffsetY, Math.min(newY, maxOffsetY));
-
         positionRef.current = { x: newX, y: newY };
         updateImageTransform();
       }
@@ -56,11 +61,6 @@ const ZoomableImage = ({ img }) => {
   };
 
   const handleTouchEnd = () => {
-    const now = new Date().getTime();
-    if (now - lastTouchEndRef.current <= 300) {
-      // handleDoubleTap(event);
-    }
-    lastTouchEndRef.current = now;
     initialDistanceRef.current = null;
   };
 
@@ -83,7 +83,16 @@ const ZoomableImage = ({ img }) => {
       }
     }
   };
-  
+
+  const handleDoubleTap = () => {
+    if (zoomRef.current === 1) {
+      zoomRef.current = 5; // Zoom in
+    } else {
+      zoomRef.current = 1; // Zoom out
+    }
+    updateImageTransform();
+  };
+
   const containerStyle = {
     position: 'relative',
     overflow: 'hidden',
@@ -94,13 +103,13 @@ const ZoomableImage = ({ img }) => {
     alignItems: 'center',
     border: '4px solid blue',
   };
-  
+
   const imgStyle = {
     position: 'absolute',
     maxWidth: 'none',
     maxHeight: 'none',
     width: '100%',
-    transform : `scale(${zoomRef.current}) translate(${positionRef.current.x / zoomRef.current}px, ${positionRef.current.y / zoomRef.current}px)`,
+    transform: `scale(${zoomRef.current}) translate(${positionRef.current.x / zoomRef.current}px, ${positionRef.current.y / zoomRef.current}px)`,
     height: '100%',
     transformOrigin: 'center center',
     transition: 'transform 0.2s',
@@ -114,13 +123,14 @@ const ZoomableImage = ({ img }) => {
   }, [zoomRef.current]);
 
   const handleZoomIn = () => {
-    zoomRef.current =  zoomRef.current + 0.2;
+    zoomRef.current = zoomRef.current + 0.2;
+    updateImageTransform();
   };
 
   const handleZoomOut = () => {
-    zoomRef.current =  zoomRef.current - 0.2;
+    zoomRef.current = zoomRef.current - 0.2;
+    updateImageTransform();
   };
-
 
   return (
     <main>
@@ -131,20 +141,11 @@ const ZoomableImage = ({ img }) => {
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        <img
-          ref={imgRef}
-          src={img}
-          alt="Zoomable"
-          style={imgStyle}
-        />
+        <img ref={imgRef} src={img} alt="Zoomable" style={imgStyle} />
       </div>
       <div className='flex gap-4 mt-4 ms-8'>
-        <button className='bg-white text-black p-2' onClick={handleZoomIn}>
-          Zoom In
-        </button>
-        <button className='bg-white text-black p-2' onClick={handleZoomOut}>
-          Zoom Out
-        </button>
+        <button className='bg-white text-black p-2' onClick={handleZoomIn}> Zoom In </button>
+        <button className='bg-white text-black p-2' onClick={handleZoomOut}> Zoom Out </button>
       </div>
     </main>
   );
