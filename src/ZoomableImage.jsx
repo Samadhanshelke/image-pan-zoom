@@ -27,7 +27,14 @@ const ZoomableImage = ({ img }) => {
       if (initialDistanceRef.current) {
         const scale = currentDistance / initialDistanceRef.current;
         const newZoom = Math.max(1, Math.min(zoomRef.current * scale, 3));
-        zoomRef.current = newZoom;
+        if(zoomRef.current > 3){
+          zoomRef.current = 3;
+        }else if(zoomRef.current < 1){
+          zoomRef.current = 1;
+        }else{
+          zoomRef.current = newZoom;
+        }
+        console.log(zoomRef.current)
         setRenderTrigger((prev) => prev + 1); // Trigger re-render
       }
     } else if (event.touches.length === 1) {
@@ -79,7 +86,11 @@ const ZoomableImage = ({ img }) => {
 
   const handleZoomOut = () => {
     const newZoom = Math.max(1, zoomRef.current - 0.2);
-    zoomRef.current = newZoom;
+    if(zoomRef.current < 1){
+      zoomRef.current = 1;
+    }else{
+      zoomRef.current = newZoom;
+    }
     setRenderTrigger((prev) => prev + 1); // Trigger re-render
   };
 
@@ -91,7 +102,7 @@ const ZoomableImage = ({ img }) => {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    border: '4px solid blue',
+    border: '4px solid red',
   };
 
   const imgStyle = {
