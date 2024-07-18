@@ -49,11 +49,11 @@ const ZoomableImage = ({ img }) => {
         let newX = initialPositionRef.current.x + deltaX;
         let newY = initialPositionRef.current.y + deltaY;
         // Calculate boundaries
-        const maxOffsetX = Math.max(0, (imgRect.width * zoomRef.current - containerRect.width) / 8);
-        const maxOffsetY = Math.max(0, (imgRect.height * zoomRef.current - containerRect.height) / 8);
+        const maxX = Math.max(0, (imgRect.width * zoomRef.current - containerRect.width)/8);
+        const maxY = Math.max(0, (imgRect.height * zoomRef.current - containerRect.height)/8);
         // Ensure the image stays within the container
-        newX = Math.max(-maxOffsetX, Math.min(newX, maxOffsetX));
-        newY = Math.max(-maxOffsetY, Math.min(newY, maxOffsetY));
+        newX = Math.max(-maxX, Math.min(newX, maxX));
+        newY = Math.max(-maxY, Math.min(newY, maxY));
         positionRef.current = { x: newX, y: newY };
         updateImageTransform();
       }
@@ -79,7 +79,7 @@ const ZoomableImage = ({ img }) => {
         img.style.height = '100%';
         positionRef.current = { x: 0, y: 0 };
       } else {
-        img.style.transform = `scale(${zoomRef.current}) translate(${positionRef.current.x / zoomRef.current}px, ${positionRef.current.y / zoomRef.current}px)`;
+        img.style.transform = `scale(${zoomRef.current}) translate(${positionRef.current.x }px, ${positionRef.current.y }px)`;
       }
     }
   };
@@ -101,7 +101,7 @@ const ZoomableImage = ({ img }) => {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    border: '4px solid red',
+    // border: '4px solid red',
   };
 
   const imgStyle = {
@@ -109,28 +109,28 @@ const ZoomableImage = ({ img }) => {
     maxWidth: 'none',
     maxHeight: 'none',
     width: '100%',
-    transform: `scale(${zoomRef.current}) translate(${positionRef.current.x / zoomRef.current}px, ${positionRef.current.y / zoomRef.current}px)`,
+    // transform: `scale(${zoomRef.current}) translate(${positionRef.current.x }px, ${positionRef.current.y}px)`,
     height: '100%',
     transformOrigin: 'center center',
     transition: 'transform 0.2s',
   };
 
   useEffect(() => {
-    if (zoomRef.current === 1) {
+    if (zoomRef.current <= 1) {
       positionRef.current = { x: 0, y: 0 };
       updateImageTransform();
     }
   }, [zoomRef.current]);
 
-  const handleZoomIn = () => {
-    zoomRef.current = zoomRef.current + 0.2;
-    updateImageTransform();
-  };
+  // const handleZoomIn = () => {
+  //   zoomRef.current = zoomRef.current + 0.2;
+  //   updateImageTransform();
+  // };
 
-  const handleZoomOut = () => {
-    zoomRef.current = zoomRef.current - 0.2;
-    updateImageTransform();
-  };
+  // const handleZoomOut = () => {
+  //   zoomRef.current = zoomRef.current - 0.2;
+  //   updateImageTransform();
+  // };
 
   return (
     <main>
@@ -143,10 +143,7 @@ const ZoomableImage = ({ img }) => {
       >
         <img ref={imgRef} src={img} alt="Zoomable" style={imgStyle} />
       </div>
-      <div className='flex gap-4 mt-4 ms-8'>
-        <button className='bg-white text-black p-2' onClick={handleZoomIn}> Zoom In </button>
-        <button className='bg-white text-black p-2' onClick={handleZoomOut}> Zoom Out </button>
-      </div>
+      
     </main>
   );
 };
