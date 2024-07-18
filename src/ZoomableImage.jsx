@@ -34,7 +34,7 @@ const ZoomableImage = ({ img }) => {
       const currentDistance = getDistance(event.touches[0], event.touches[1]);
       if (initialDistanceRef.current) {
         const scale = currentDistance / initialDistanceRef.current;
-        const newZoom = Math.max(1, Math.min(zoomRef.current * scale, 5));
+        const newZoom = Math.max(1, Math.min(zoomRef.current * scale, 3));
         zoomRef.current = newZoom;
         updateImageTransform();
       }
@@ -49,8 +49,8 @@ const ZoomableImage = ({ img }) => {
         let newX = initialPositionRef.current.x + deltaX;
         let newY = initialPositionRef.current.y + deltaY;
         // Calculate boundaries
-        const maxX = Math.max(0, (imgRect.width * zoomRef.current - containerRect.width)/8);
-        const maxY = Math.max(0, (imgRect.height * zoomRef.current - containerRect.height)/8);
+        const maxX = Math.max(0, (imgRect.width * zoomRef.current - containerRect.width)/25);
+        const maxY = Math.max(0, (imgRect.height * zoomRef.current - containerRect.height)/25);
         // Ensure the image stays within the container
         newX = Math.max(-maxX, Math.min(newX, maxX));
         newY = Math.max(-maxY, Math.min(newY, maxY));
@@ -86,7 +86,7 @@ const ZoomableImage = ({ img }) => {
 
   const handleDoubleTap = () => {
     if (zoomRef.current === 1) {
-      zoomRef.current = 2; // Zoom in
+      zoomRef.current = 3; // Zoom in
     } else {
       zoomRef.current = 1; // Zoom out
     }
