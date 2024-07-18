@@ -49,19 +49,15 @@ const ZoomableImage = ({ img }) => {
         let newX = initialPositionRef.current.x + deltaX;
         let newY = initialPositionRef.current.y + deltaY;
         // Calculate boundaries
-        const maxX = Math.max(0, (imgRect.width  - containerRect.width)/ (zoomRef.current * 2));
-        const maxY = Math.max(0, (imgRect.height  - containerRect.height)/(zoomRef.current * 2));
+        const maxX = Math.max(0, (imgRect.width * zoomRef.current - containerRect.width)/25);
+        const maxY = Math.max(0, (imgRect.height * zoomRef.current - containerRect.height)/25);
         // Ensure the image stays within the container
-        console.log(`maxX: `,maxX),
-        console.log('newX: ', newX)
-        // console.log(`height: ${imgRect.height}  - ${containerRect.height} = `, (imgRect.height  - containerRect.height)/2)
         newX = Math.max(-maxX, Math.min(newX, maxX));
         newY = Math.max(-maxY, Math.min(newY, maxY));
         positionRef.current = { x: newX, y: newY };
-
         updateImageTransform();
       }
-    }  
+    }
   };
 
   const handleTouchEnd = () => {
@@ -90,7 +86,7 @@ const ZoomableImage = ({ img }) => {
 
   const handleDoubleTap = () => {
     if (zoomRef.current === 1) {
-      zoomRef.current = 2; // Zoom in
+      zoomRef.current = 3; // Zoom in
     } else {
       zoomRef.current = 1; // Zoom out
     }
@@ -105,7 +101,7 @@ const ZoomableImage = ({ img }) => {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    border: '2px solid red',
+    // border: '4px solid red',
   };
 
   const imgStyle = {
